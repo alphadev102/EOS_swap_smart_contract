@@ -80,16 +80,6 @@
             ]
         },
         {
-            "name": "log",
-            "base": "",
-            "fields": [
-                {
-                    "name": "message",
-                    "type": "string"
-                }
-            ]
-        },
-        {
             "name": "setadmin",
             "base": "",
             "fields": [
@@ -137,11 +127,6 @@
         {
             "name": "init",
             "type": "init",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "log",
-            "type": "log",
             "ricardian_contract": ""
         },
         {
