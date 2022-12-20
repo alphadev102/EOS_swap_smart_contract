@@ -1,0 +1,183 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "bots",
+            "base": "",
+            "fields": [
+                {
+                    "name": "key",
+                    "type": "name"
+                },
+                {
+                    "name": "role",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "buytoken",
+            "base": "",
+            "fields": [
+                {
+                    "name": "eos_amount",
+                    "type": "asset"
+                },
+                {
+                    "name": "target_token",
+                    "type": "string"
+                },
+                {
+                    "name": "token_amount_per_native",
+                    "type": "int64"
+                },
+                {
+                    "name": "slippage_bips",
+                    "type": "int64"
+                },
+                {
+                    "name": "platform_fee_bips",
+                    "type": "int64"
+                },
+                {
+                    "name": "gas_estimate",
+                    "type": "int64"
+                },
+                {
+                    "name": "recipient",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "configs",
+            "base": "",
+            "fields": [
+                {
+                    "name": "admin",
+                    "type": "name"
+                },
+                {
+                    "name": "pending_platform_fee",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": [
+                {
+                    "name": "initial_admin",
+                    "type": "name"
+                },
+                {
+                    "name": "pending_platform_fee",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "log",
+            "base": "",
+            "fields": [
+                {
+                    "name": "message",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "setadmin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "new_admin",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "setbotrole",
+            "base": "",
+            "fields": [
+                {
+                    "name": "new_bot",
+                    "type": "name"
+                },
+                {
+                    "name": "brole",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "withdrawfee",
+            "base": "",
+            "fields": [
+                {
+                    "name": "recipient",
+                    "type": "name"
+                },
+                {
+                    "name": "amount",
+                    "type": "asset"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "buytoken",
+            "type": "buytoken",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "log",
+            "type": "log",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setadmin",
+            "type": "setadmin",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setbotrole",
+            "type": "setbotrole",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "withdrawfee",
+            "type": "withdrawfee",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "bots",
+            "type": "bots",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "configs",
+            "type": "configs",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}
