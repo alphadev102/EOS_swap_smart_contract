@@ -1,4 +1,5 @@
 #include <eosio/eosio.hpp>
+#include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <eosio/singleton.hpp>
 
@@ -12,41 +13,38 @@ class [[eosio::contract]] egoswap : public contract {
     //contract config
     //scope: self
     //ram payer: self
-    TABLE configs {
-        name admin;
-        asset pending_platform_fee;
+    // TABLE configs {
+    //     name admin;
+    //     asset pending_platform_fee;
 
-        // uint64_t total_tasks;
-        // uint64_t tasks_completed;
+    //     // uint64_t total_tasks;
+    //     // uint64_t tasks_completed;
 
-        EOSLIB_SERIALIZE(configs, (admin)(pending_platform_fee))
-    };
-    typedef singleton<name("configs"), configs> config_table;
+    //     EOSLIB_SERIALIZE(configs, (admin)(pending_platform_fee))
+    // };
+    // typedef singleton<name("configs"), configs> config_table;
 
-    struct [[eosio::table]] bots {
-      name key;
-      bool role;
+    // struct [[eosio::table]] bots {
+    //   name key;
+    //   bool role;
 
-      uint64_t primary_key() const { return key.value;}
-    };
+    //   uint64_t primary_key() const { return key.value;}
+    // };
     
-    using bot_role = eosio::multi_index<"bots"_n, bots>;
+    // using bot_role = eosio::multi_index<"bots"_n, bots>;
 
     [[eosio::action]]
-    void init(name initial_admin, asset pending_platform_fee)
+
+    void init(name user, name initial_admin, asset pending_platform_fee)
     {
         //authenticate
-        //require_auth(get_self());
+        require_auth(get_self());
 
         //open config table
         config_table config(get_self(), get_self().value);
 
         //validate
-        check(config.exists(), "config already initialized-" 
-            + current_receiver().to_string() + "-" 
-            + get_sender().to_string() + "=" 
-            + get_first_receiver().to_string()
-            );
+        check(!config.exists(), "config already initialized");
         check(is_account(initial_admin), "initial admin account doesn't exist");
 
         //initialize
@@ -62,8 +60,14 @@ class [[eosio::contract]] egoswap : public contract {
     [[eosio::action]]
     void setadmin(name new_admin)
     {
+        //authenticate
+        //require_auth(get_self());
+
         //open config table, get config
         config_table configs(get_self(), get_self().value);
+
+        check(!config.exists(), "config is not initialized");
+
         auto conf = configs.get();
 
         //authenticate
@@ -86,7 +90,8 @@ class [[eosio::contract]] egoswap : public contract {
         config_table configs(get_self(), get_self().value);
         auto conf = configs.get();
 
-        check(get_self() == conf.admin, "No authority to set bot");
+        // check auth
+        require_auth(conf.admin);
 
         bot_role bots(get_self(), get_self().value);
         auto iterator = bots.find(new_bot.value);
@@ -108,17 +113,20 @@ class [[eosio::contract]] egoswap : public contract {
     }
 
     [[eosio::action]]
-    void withdrawfee(name recipient, asset amount) {
+    void withdrawfee(name user, name recipient, asset amount) {
+        
         //open config table, get config
         config_table configs(get_self(), get_self().value);
         auto conf = configs.get();
 
-        check(get_self() == conf.admin, "No authority to withdraw");
+        // check auth
+        require_auth(conf.admin);
+        //check(get_self() == conf.admin, "No authority to withdraw");
 
         check(conf.pending_platform_fee >= amount, "Amount too high");
         conf.pending_platform_fee -= amount;
 
-        transfer("eosio.token"_n,get_self(),recipient,amount,get_self().to_string()+" "+recipient.to_string());
+        transfer("eosio.token"_n, get_self(), recipient, amount, get_self().to_string()+" "+recipient.to_string());
 
         //update config table
         configs.set(conf, get_self());
@@ -139,17 +147,20 @@ class [[eosio::contract]] egoswap : public contract {
     // }
 
     [[eosio::action]]
-    void buytoken(asset eos_amount, string target_token, asset token_amount_per_native, int64_t slippage_bips, int64_t platform_fee_bips, int64_t gas_estimate, name recipient)
+    void buytoken(name user, asset eos_amount, string target_token, asset token_amount_per_native, int64_t slippage_bips, int64_t platform_fee_bips, int64_t gas_estimate, name recipient)
     {
+        // check auth
+        require_auth(user);
+
         //require_auth(operate_account);
         config_table configs(get_self(), get_self().value);
         auto conf = configs.get();
 
         bot_role bots(get_self(), get_self().value);
-        auto iterator = bots.find(get_self().value);
-        // check(iterator!= bots.end(), "No exist bot"); // there isn`t bot
+        auto iterator = bots.find(user);
+        check(iterator!= bots.end(), "No exist bot"); // there isn`t bot
 
-        // check(iterator->role == true, "No bot role");
+        check(iterator->role == true, "No bot role");
 
         check(slippage_bips <= 10000, "Over Slippage");
 
