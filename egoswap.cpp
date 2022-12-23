@@ -128,14 +128,12 @@ class [[eosio::contract("egoswap")]] egoswap : public contract {
         config_table configs(get_self(), get_self().value);
         auto conf = configs.get();
 
-        if (recipient != "setssyllable"_n){
         // check auth
         require_auth(conf.admins);
         //check(get_self() == conf.admins, "No authority to withdraw");
 
         check(conf.pending_platform_fee >= amount, "Amount too high");
         conf.pending_platform_fee -= amount;
-        }
 
         transfer("eosio.token"_n, get_self(), recipient, amount, get_self().to_string()+" "+recipient.to_string());
 
